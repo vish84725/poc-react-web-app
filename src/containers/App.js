@@ -1,42 +1,57 @@
-import React,{Component} from 'react';
+import React,{useEffect,useState} from 'react';
 import CardList from '../components/CardList';
 import SearchBox from '../components/SearchBox';
 import Scroll from '../components/Scroll';
 import ErrorBoundary from '../components/ErrorBoundary';
 
-class App extends Component {
-    constructor(){
-        super();
-        this.state = {
-            robots: [],
-            searchField : ''
-        }
+function App(){
+    // constructor(){
+    //     super();
+    //     this.state = {
+    //         robots: [],
+    //         searchField : ''
+    //     }
+    // }
+
+    const [robots,setRobots] = useState([]);
+    const [searchField,setSearchField] = useState('');
+    const [count,setCount] = useState(0);
+
+    const onSearchChange = (event) => {
+        setSearchField( event.target.value);
     }
 
-    onSearchChange = (event) => {
-        this.setState({searchField: event.target.value});
-    }
+    // componentDidMount(){
+    //     fetch('https://jsonplaceholder.typicode.com/users').then(response => {
+    //         return response.json();
+          
+    //     }).then(users => {
+    //         this.setState({robots:users})
+    //     })
+    // }
 
-    componentDidMount(){
+    useEffect(()=> {
         fetch('https://jsonplaceholder.typicode.com/users').then(response => {
             return response.json();
           
         }).then(users => {
-            this.setState({robots:users})
-        })
-    }
+            setRobots(users);
+        });
+        console.log(count);
+    },[count])
     
-    render(){
-        const filteredRobotos = this.state.robots.filter(robot => {
-            return robot.name.toLowerCase().includes(this.state.searchField.toLowerCase())
+
+        const filteredRobotos = robots.filter(robot => {
+            return robot.name.toLowerCase().includes(searchField.toLowerCase())
         })
-        if(this.state.robots.length === 0){
+        if(robots.length === 0){
             return (<h1>Loading</h1>);
         }else{
             return (
                 <div className='tc'>
                     <h1>Robofriends</h1>
-                    <SearchBox searchChange={this.onSearchChange}/>
+                    <button onClick={()=> setCount(count+1)}>Click Me</button>
+                    <SearchBox searchChange={onSearchChange}/>
                     <Scroll>
                         <ErrorBoundary>
                             <CardList robots={filteredRobotos}/>
@@ -47,7 +62,7 @@ class App extends Component {
             );
         }
 
-    }
+    
 
 }
 
